@@ -1,0 +1,79 @@
+package selenium;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+
+public class Day1 {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		WebDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		driver.get("https://www.myntra.com/");
+		WebElement womenadd = driver.findElement(By.xpath("(//a[@class='desktop-main'])[2]"));
+		Actions abc=new Actions(driver);
+		abc.moveToElement(womenadd).perform();
+		driver.findElement(By.linkText("Jackets & Coats")).click();
+		String count = driver.findElement(By.xpath("//span[@class='title-count']")).getText();
+		String text = count.replaceAll("[^0-9]", "");
+		int total = Integer.parseInt(text);
+		System.out.println("TotalCount: "+total);
+
+		String A = driver.findElement(By.xpath("(//span[@class='categories-num'])[1]")).getText();
+		String text1 = A.replaceAll("[^0-9]", "");
+		int item1 = Integer.parseInt(text1);	
+		System.out.println("Jackets: "+item1);
+
+		String B = driver.findElement(By.xpath("(//span[@class='categories-num'])[2]")).getText();
+		String text2 = B.replaceAll("[^0-9]", "");
+		int item2 = Integer.parseInt(text2);	
+		System.out.println("Coats: "+item2);
+		int sum=item1+item2;
+
+		if(total==sum) {
+			System.out.println("Count matches");
+		}else {
+			System.out.println("Count does not match");
+		}
+		driver.findElement(By.xpath("(//div[@class='common-checkboxIndicator'])[2]")).click();
+		driver.findElement(By.xpath("//div[@class='brand-more']")).click();
+		driver.findElement(By.xpath("(//input[@type='text'])[2]")).sendKeys("Mango");
+		driver.findElement(By.xpath("//label[@class=' common-customCheckbox']//div")).click();
+		driver.findElement(By.xpath("//span[@class='myntraweb-sprite FilterDirectory-close sprites-remove']")).click();
+		Thread.sleep(2000L);
+		List<WebElement> Brands = driver.findElements(By.xpath("//div//h3"));
+		boolean brandmango=false;
+		for (WebElement eachBrand : Brands) {
+			if(!eachBrand.getText().equals("MANGO")) {
+				brandmango=true;
+			}
+		}if(brandmango==false) {
+			System.out.println("All brands are Mango");
+		}
+		WebElement sortbyadd = driver.findElement(By.xpath("//div[@class='sort-sortBy']"));
+		Actions move=new Actions(driver);
+		move.moveToElement(sortbyadd).perform();
+
+		driver.findElement(By.xpath("(//label[@class='sort-label '])[3]")).click();
+		Thread.sleep(2000);
+		List<WebElement> prices = driver.findElements(By.xpath("//span[@class='product-discountedPrice']"));
+		WebElement pricestr = prices.get(0);
+		String pricetxt = pricestr.getText();
+		String pricetxt1 = pricetxt.replaceAll("[^0-9]", "");
+		int priceint = Integer.parseInt(pricetxt1);
+		System.out.println("Price of first item: "+priceint);
+		WebElement firstitem = driver.findElement(By.xpath("//div[@class='product-productMetaInfo']"));
+		Actions one=new Actions(driver);
+		one.moveToElement(firstitem).perform();
+		driver.findElement(By.xpath("//span[@class='product-actionsButton product-wishlist product-prelaunchBtn']")).click();
+		Thread.sleep(2000);
+		driver.close();
+	}
+}
