@@ -1,0 +1,76 @@
+package selenium;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class Day2 {
+
+	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		WebDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		driver.get("https://www.nykaa.com/");
+		WebElement brandadd = driver.findElement(By.xpath("//li[@class='menu-dropdown-icon']"));
+		Actions brands=new Actions(driver);
+		brands.moveToElement(brandadd).perform();
+		WebElement popularadd = driver.findElement(By.xpath("(//div[@class='BrandsCategoryHeading']//a)[1]"));
+		Actions popular=new Actions(driver);
+		popular.moveToElement(popularadd).perform();
+		String parentwindow = driver.getWindowHandle();
+		driver.findElement(By.xpath("(//li[@class='brand-logo menu-links']//img)[5]")).click();
+		Set<String> allwindow = driver.getWindowHandles();
+		for (String eachwindow : allwindow) {
+			if(eachwindow!=parentwindow) {
+				driver.switchTo().window(eachwindow);		
+			}	
+		}
+		System.out.println(driver.getTitle());
+		if(driver.getTitle().contains("L'Oreal Paris")) {
+			System.out.println("Title matches");
+		}else {
+			System.out.println("Title does not match");
+		}
+		//driver.findElement(By.xpath("//button[text()='Maybe later']")).click();
+		driver.findElement(By.xpath("//span[@class='pull-right']//i[1]")).click();
+		driver.findElement(By.xpath("(//div[@class='control__indicator radio'])[4]")).click();
+		Thread.sleep(2000);
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("(//div[@class='pull-right filter-options-toggle']/i)[1]"))));	
+		driver.findElement(By.xpath("(//div[@class='pull-right filter-options-toggle']/i)[1]")).click();
+		WebElement shampoo = driver.findElement(By.xpath("//span[text()='Shampoo (21)']/following-sibling::div"));
+		shampoo.click();
+		String filter = driver.findElement(By.xpath("//ul[@class='pull-left applied-filter-lists']")).getText();
+		if (filter.contains("Shampoo")) {
+			System.out.println("The filter is applied correctly");
+		} else {
+			System.out.println("The filter is not applied correctly");
+		}
+		driver.findElement(By.xpath("//img[@src='https://images-static.nykaa.com/media/catalog/product/tr:w-276,h-276,cm-pad_resize/8/9/8901526102518_color_protect_shampoo_75ml_82.5ml__i1_1.png']")).click();
+		Set<String> allwindow1 = driver.getWindowHandles();
+		List<String> li=new ArrayList<String>(allwindow1);
+		driver.switchTo().window(li.get(2));
+		driver.findElement(By.xpath("//span[text()='175ml']")).click();
+		String price = driver.findElement(By.xpath("(//span[@class='post-card__content-price-offer'])[1]")).getText();
+		System.out.println("The Price is "+price);
+		driver.findElement(By.xpath("(//button[@class='combo-add-to-btn prdt-des-btn js--toggle-sbag nk-btn nk-btn-rnd atc-simple m-content__product-list__cart-btn  '])[1]")).click();
+		driver.findElement(By.xpath("//div[@class='AddBagIcon']")).click();
+		Thread.sleep(2000);
+		String grandtotal = driver.findElement(By.xpath("//div[@class='value medium-strong']")).getText();
+		System.out.println("Grand Total: "+ grandtotal);
+		driver.findElement(By.xpath("//button[@type='button']/span")).click();
+		driver.findElement(By.xpath("//button[@class='btn full big']")).click();
+		String warningmessage = driver.findElement(By.xpath("//div[@class='message']")).getText();
+		System.out.println("Warning Message is :"+warningmessage);
+		driver.quit();
+	}
+}
