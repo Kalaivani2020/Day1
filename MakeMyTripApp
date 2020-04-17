@@ -1,4 +1,4 @@
-package selenium;
+package challengeByBabu;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -7,7 +7,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Day3 {
 
@@ -48,6 +50,12 @@ public class Day3 {
 		driver.findElement(By.xpath("//span[text()='MORE OPTIONS']")).click();
 		driver.findElement(By.xpath("//span[@class='latoBold font12 pointer makeFlex hrtlCenter right blueText']")).click();
 		driver.findElement(By.xpath("//span[@class='close']")).click();
+		Thread.sleep(2000);
+		driver.switchTo().frame("notification-frame-3175461c");
+		driver.findElement(By.xpath("//i[@class='we_forward']")).click();
+		driver.switchTo().defaultContent();
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.linkText("BOOK THIS NOW"))));
 		driver.findElement(By.linkText("BOOK THIS NOW")).click();
 		String amount = driver.findElement(By.id("revpg_total_payable_amt")).getText();
 		String totalpayableamount = amount.replaceAll("[^0-9]", "");
