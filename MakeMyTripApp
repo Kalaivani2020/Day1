@@ -54,8 +54,6 @@ public class Day3 {
 		driver.switchTo().frame("notification-frame-3175461c");
 		driver.findElement(By.xpath("//i[@class='we_forward']")).click();
 		driver.switchTo().defaultContent();
-		WebDriverWait wait = new WebDriverWait(driver, 30);
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.linkText("BOOK THIS NOW"))));
 		driver.findElement(By.linkText("BOOK THIS NOW")).click();
 		String amount = driver.findElement(By.id("revpg_total_payable_amt")).getText();
 		String totalpayableamount = amount.replaceAll("[^0-9]", "");
