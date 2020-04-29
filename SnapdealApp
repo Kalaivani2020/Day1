@@ -1,0 +1,98 @@
+package challengeByBabu;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class Day10 {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		WebDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		driver.get("https://www.snapdeal.com/");
+		WebElement toysadd = driver.findElement(By.xpath("//span[contains(text(),'Toys, Kids')]"));
+		Actions action=new Actions(driver);
+		action.moveToElement(toysadd).perform();
+		driver.findElement(By.xpath("//span[text()='Educational Toys']")).click();
+		driver.findElement(By.xpath("//label[@for='avgRating-4.0']")).click();
+		Thread.sleep(2000);
+		WebDriverWait wait= new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//label[@for='discount-40%20-%2050']"))));
+		driver.findElement(By.xpath("//label[@for='discount-40%20-%2050']")).click();
+		Thread.sleep(2000);
+		WebElement pincode = driver.findElement(By.xpath("(//input[@class='sd-input'])[2]"));
+		pincode.click();
+		pincode.sendKeys("600089");
+		driver.findElement(By.xpath("//button[text()='Check']")).click();
+		Thread.sleep(2000);
+		action.moveToElement(driver.findElement(By.xpath("//picture[@class='picture-elem']"))).perform();
+		driver.findElement(By.xpath("//div[contains(text(),'Quick View')]")).click();
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//a[contains(text(),'view details')]"))));
+		driver.findElement(By.xpath("//a[contains(text(),'view details')]")).click();
+		Thread.sleep(2000);
+		String price = driver.findElement(By.xpath("//span[@class='pdp-final-price']")).getText();
+		String pricestring = price.replaceAll("[^0-9]", "");
+		int priceamt = Integer.parseInt(pricestring);
+		System.out.println("Price of the toy is: "+priceamt);
+		String delivery = driver.findElement(By.xpath("(//span[@class='availCharges'])[2]")).getText();
+		String deliverystr = delivery.replaceAll("[^0-9]", "");
+		int deliveryamt = Integer.parseInt(deliverystr);
+		System.out.println("Delivery charge of the toy is: "+deliveryamt);
+		int ToyTotalamt=priceamt+deliveryamt;
+		driver.findElement(By.xpath("//span[@class='intialtext']")).click();
+		String total = driver.findElement(By.xpath("(//span[@class='price'])[2]")).getText();
+		String totalstr = total.replaceAll("[^0-9]", "");
+		int YouPay = Integer.parseInt(totalstr);
+		if(ToyTotalamt==YouPay) {
+			System.out.println("Amount displayed is correct "+"You pay amount is: "+YouPay);
+		}else {
+			System.out.println("Amount is not displayed correctly "+"You pay amount is: "+YouPay);
+		}
+		String parentwindow = driver.getWindowHandle();
+		driver.findElement(By.id("inputValEnter")).sendKeys("Sanitizer",Keys.ENTER);
+		driver.findElement(By.xpath("//p[text()='BioAyurveda Neem Power  Hand Sanitizer 500 mL Pack of 1']")).click();
+
+		Set<String> allwindow = driver.getWindowHandles();
+		for (String eachwindow : allwindow) {
+			if(eachwindow!=parentwindow) {
+				driver.switchTo().window(eachwindow);		
+			}	
+		}		
+		String sanitizer = driver.findElement(By.xpath("//span[@class='pdp-final-price']")).getText();
+		String sanitizerstr = sanitizer.replaceAll("[^0-9]", "");
+		int sanitizeramt = Integer.parseInt(sanitizerstr);
+		System.out.println("Price of the sanitizer is: "+sanitizeramt);
+		String delivery1 = driver.findElement(By.xpath("(//span[@class='availCharges'])[2]")).getText();
+		String deliverystr1 = delivery1.replaceAll("[^0-9]", "");
+		int deliveryamt1 = Integer.parseInt(deliverystr1);
+		System.out.println("Delivery charge of the sanitizer is: "+deliveryamt1);
+		int SanitizerTotalamt=sanitizeramt+deliveryamt1;
+		System.out.println("Sanitizer Total amount is "+SanitizerTotalamt);
+
+		driver.findElement(By.xpath("//span[text()='ADD TO CART']")).click();
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("//div[@class='cartInner']")).click();
+		Thread.sleep(2000);
+		String text = driver.findElement(By.xpath("//input[@type='button']")).getAttribute("value");
+		String paystr = text.replaceAll("[^0-9]", "");
+		int ProccedtoPay = Integer.parseInt(paystr);
+
+		if(ToyTotalamt+SanitizerTotalamt==ProccedtoPay) {
+			System.out.println("Proceed to Pay matches the total amount of both the products");
+		}else {
+			System.out.println("The amount of does not match");
+		}		
+		driver.quit();
+	}
+}
