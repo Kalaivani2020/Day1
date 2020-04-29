@@ -1,0 +1,68 @@
+package selenium;
+
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class Day5 {
+
+	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		WebDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		driver.get("https://www.bigbasket.com/");
+		WebElement categoryadd = driver.findElement(By.xpath("//a[@class= 'dropdown-toggle meganav-shop']"));
+		Actions category=new Actions(driver);
+		category.moveToElement(categoryadd).perform();
+		WebElement foodgrainsadd = driver.findElement(By.linkText("Foodgrains, Oil & Masala"));
+		Actions food=new Actions(driver);
+		food.moveToElement(foodgrainsadd).perform();
+		WebElement riceadd = driver.findElement(By.linkText("Rice & Rice Products"));
+		Actions rice=new Actions(driver);
+		rice.moveToElement(riceadd).click().perform();
+		driver.findElement(By.xpath("//span[text()='Boiled & Steam Rice']")).click();
+		Thread.sleep(2000);
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("(//span[text()='bb Royal'])[1]"))));
+		driver.findElement(By.xpath("(//span[text()='bb Royal'])[1]")).click();
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("(//i[@class='fa fa-caret-down'])[3]")).click();
+		driver.findElement(By.xpath("(//a[@ng-click='vm.onProductChange(allProducts)'])[9]")).click();
+		String text = driver.findElement(By.xpath("(//span[@class='discnt-price'])[3]")).getText();
+		System.out.println("Price of 5Kg Rice is: "+text);
+		driver.findElement(By.xpath("(//a[text()='Ponni Boiled Rice - Super Premium']//following::button)[2]")).click();
+		driver.findElement(By.linkText("Continue")).click();
+		driver.findElement(By.xpath("//div[@class='input-group']//input")).sendKeys("Dal",Keys.ENTER);
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("(//span[@data-bind='label'])[3]")).click();
+		driver.findElement(By.xpath("(//span[text()='2 kg'])[4]")).click();
+		WebElement qty = driver.findElement(By.xpath("(//input[@ng-model='vm.startQuantity'])[3]"));
+		qty.clear();
+		qty.sendKeys("2");
+		String text2 = driver.findElement(By.xpath("(//span[@class='discnt-price'])[3]")).getText();
+		System.out.println("Price of 2Kg Dal is: "+text2);
+		driver.findElement(By.xpath("(//button[@qa='add'])[3]")).click();
+		System.out.println(driver.findElement(By.xpath("//div[@class='toast-title']")).getText());
+		//driver.findElement(By.xpath("//button[@type='button']")).click();
+		Thread.sleep(2000);
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//a[@qa='myBasket']"))));
+		WebElement basketadd = driver.findElement(By.xpath("//a[@qa='myBasket']"));
+		Actions basket=new Actions(driver);
+		basket.moveToElement(basketadd).click().build().perform();
+		Thread.sleep(2000);
+		String text3 = driver.findElement(By.xpath("//span[@ng-bind='vm.cart.cart_total']")).getText();
+		System.out.println("SubTotal is: "+text3);
+		driver.findElement(By.xpath("(//button[@qa='decQtyMB'])[2]")).click();
+		Thread.sleep(2000);
+		String text4 = driver.findElement(By.xpath("//span[@ng-bind='vm.cart.cart_total']")).getText();
+		System.out.println("SubTotal after removing one pack of Dal: "+text4);
+		driver.close();
+	}
+}
